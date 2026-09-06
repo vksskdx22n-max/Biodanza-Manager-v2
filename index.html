@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biodanza Manager v1.6</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --verde: #B8E6C4;
+  --verde-scuro: #2A6B40;
+  --verde-mid: #4A9B60;
+  --verde-light: #EDF7F0;
+  --giallo: #FBF0A0;
+  --giallo-scuro: #7A6B00;
+  --giallo-mid: #9A8500;
+  --giallo-light: #FEFBE8;
+  --lilla: #E8B8DC;
+  --lilla-scuro: #5A1A4A;
+  --lilla-mid: #9A5888;
+  --lilla-light: #F7E8F5;
+  --white: #ffffff;
+  --gray-light: #f8f8f8;
+  --gray: #888;
+  --text: #2a2a2a;
+  --border: #e0e0e0;
+  --radius: 12px;
+  --radius-lg: 18px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #f4f7f4;
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 110px;
+}
+
+/* HEADER */
+.header {
+  background: var(--verde);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1.5px solid #a0d4b0;
+}
+.header-title {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--verde-scuro);
+  letter-spacing: -0.3px;
+}
+.header-sub {
+  font-size: 0.7rem;
+  color: var(--verde-mid);
+  font-weight: 500;
+  margin-top: 1px;
+}
+.header-icon {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--giallo);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+}
+
+/* NAV — Floating Island */
+.nav {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 40px;
+  box-shadow: 0 8px 32px rgba(42,107,64,0.13);
+  display: flex;
+  z-index: 100;
+  padding: 6px 10px;
+  gap: 2px;
+  width: max-content;
+  max-width: 96vw;
+}
+.nav-btn {
+  flex: none;
+  padding: 0.45rem 0.6rem 0.5rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: var(--gray);
+  transition: all 0.2s;
+  border-radius: 30px;
+}
+.nav-btn.active {
+  color: var(--verde-scuro);
+  background: var(--verde-light);
+}
+.nav-btn .nav-icon {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+.nav-btn.active .nav-icon { background: var(--verde); }
+
+/* PANELS */
+.panel { display: none; padding: 1rem; }
+.panel.active { display: block; }
+
+/* CARDS — border-radius aumentato */
+.card {
+  background: white;
+  border-radius: 20px;
+  border: 0.5px solid var(--border);
+  padding: 1rem 1.125rem;
+  margin-bottom: 0.75rem;
+  transition: box-shadow 0.2s;
+}
+.card-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 0.75rem;
+}
+.card-title.verde { color: var(--verde-mid); }
+.card-title.lilla { color: var(--lilla-mid); }
+.card-title.giallo { color: var(--giallo-mid); }
+
+/* FORM */
+.form-group { margin-bottom: 0.875rem; }
+.form-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--gray);
+  display: block;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.875rem;
+  color: var(--text);
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--verde-mid);
+}
+.form-textarea { resize: vertical; min-height: 70px; }
+
+/* BUTTONS */
+.btn {
+  padding: 0.65rem 1.25rem;
+  border-radius: 12px;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.btn:active { transform: scale(0.97); }
+.btn-verde { background: var(--verde); color: var(--verde-scuro); }
+.btn-lilla { background: var(--lilla); color: var(--lilla-scuro); }
+.btn-giallo { background: var(--giallo); color: var(--giallo-scuro); }
+.btn-full { width: 100%; }
+.btn-sm { padding: 0.4rem 0.75rem; font-size: 0.78rem; }
+.btn-danger { background: #ffe0e0; color: #a00; }
+
+/* TAGS / PILLS */
+.pill {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.pill-verde { background: var(--verde-light); color: var(--verde-scuro); border: 1px solid var(--verde); }
+.pill-lilla { background: var(--lilla-light); color: var(--lilla-scuro); border: 1px solid var(--lilla); }
+.pill-giallo { background: var(--giallo-light); color: var(--giallo-scuro); border: 1px solid var(--giallo); }
+.pill-rosso { background: #fff0f0; color: #a00; border: 1px solid #ffb8b8; }
+
+/* METRIC CARDS — hover lift */
+.metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 0.75rem; }
+.metric-card {
+  border-radius: 16px;
+  padding: 0.85rem 0.5rem;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+}
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+.metric-card.verde { background: var(--verde-light); border: 1.5px solid var(--verde); }
+.metric-card.giallo { background: var(--giallo-light); border: 1.5px solid var(--giallo); }
+.metric-card.lilla { background: var(--lilla-light); border: 1.5px solid var(--lilla); }
+.metric-val { font-size: 1.5rem; font-weight: 700; }
+.metric-val.verde { color: var(--verde-scuro); }
+.metric-val.giallo { color: var(--giallo-scuro); }
+.metric-val.lilla { color: var(--lilla-scuro); }
+.metric-label { font-size: 0.65rem; font-weight: 600; margin-top: 3px; }
+.metric-label.verde { color: var(--verde-mid); }
+.metric-label.giallo { color: var(--giallo-mid); }
+.metric-label.lilla { color: var(--lilla-mid); }
+
+/* LIST ITEMS */
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 0;
+  border-bottom: 0.5px solid #f0f0f0;
+  gap: 0.5rem;
+}
+.list-item:last-child { border-bottom: none; padding-bottom: 0; }
+.list-item-left { display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0; }
+.list-item-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.list-item-name { font-weight: 600; font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-item-sub { font-size: 0.72rem; color: var(--gray); margin-top: 1px; }
+.list-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* CHECKBOX GRID */
+.check-grid { display: flex; flex-direction: column; gap: 6px; }
+.check-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.check-item.checked { background: var(--verde-light); border-color: var(--verde); }
+.check-item input[type=checkbox] { accent-color: var(--verde-scuro); width: 16px; height: 16px; }
+.check-item-name { font-size: 0.875rem; font-weight: 500; }
+
+/* CALENDAR */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 0.5rem;
+}
+.cal-day-name {
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--gray);
+  padding: 4px 0;
+  text-transform: uppercase;
+}
+.cal-day {
+  aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s;
+}
+.cal-day:hover { background: var(--verde-light); }
+.cal-day.today { background: var(--verde); color: var(--verde-scuro); font-weight: 700; }
+.cal-day.has-session::after {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--lilla-mid);
+  position: absolute;
+  bottom: 3px;
+}
+.cal-day.empty { cursor: default; }
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+.cal-nav-btn {
+  background: var(--verde-light);
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--verde-scuro);
+}
+.cal-month { font-weight: 700; font-size: 0.95rem; color: var(--verde-scuro); }
+
+/* FEEDBACK STARS */
+.stars { display: flex; gap: 6px; }
+.star-btn {
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.star-btn.active { opacity: 1; }
+.star-btn:active { transform: scale(1.2); }
+
+/* BIBLIOTECA CARD */
+.tema-card {
+  background: white;
+  border-radius: var(--radius);
+  border-left: 4px solid var(--lilla);
+  padding: 0.875rem 1rem;
+  margin-bottom: 0.75rem;
+}
+.tema-nome { font-weight: 700; font-size: 0.95rem; color: var(--lilla-scuro); }
+.tema-desc { font-size: 0.8rem; color: var(--gray); margin-top: 4px; line-height: 1.4; }
+.tema-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--gray);
+}
+.empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.empty-state p { font-size: 0.875rem; }
+
+/* MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 200;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: white;
+  border-radius: 20px 20px 0 0;
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.modal-handle {
+  width: 40px; height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0 auto 1rem;
+}
+.modal-title {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--verde-scuro);
+  margin-bottom: 1rem;
+}
+
+/* SECTION HEADER */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.section-title {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--verde-scuro);
+}
+
+/* BENESSERE BAR */
+.benessere-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  margin-top: 4px;
+  overflow: hidden;
+}
+.benessere-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--verde), var(--giallo));
+  transition: width 0.4s ease;
+}
+
+/* FEEDBACK LINK BOX */
+.link-box {
+  background: var(--giallo-light);
+  border: 1px solid var(--giallo);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.link-box-text { font-size: 0.8rem; color: var(--giallo-scuro); flex: 1; word-break: break-all; }
+.link-box-copy {
+  background: var(--giallo);
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--giallo-scuro);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--verde-scuro);
+  color: white;
+  padding: 0.6rem 1.25rem;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 300;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* DIVIDER */
+.divider { height: 0.5px; background: var(--border); margin: 0.75rem 0; }
+
+/* CHART CONTAINER */
+.chart-wrap { position: relative; height: 180px; margin: 0.5rem 0; }
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="password-gate" style="display:none;position:fixed;inset:0;background:#f4f7f4;z-index:999;flex-direction:column;align-items:center;justify-content:center;padding:2rem;">
+  <div style="width:100%;max-width:360px;">
+    <div style="text-align:center;margin-bottom:2rem;">
+      <div style="font-size:3rem;margin-bottom:0.75rem;">🌿</div>
+      <div style="font-family:'Quicksand',sans-serif;font-size:1.5rem;font-weight:700;color:#2A6B40;">Biodanza Manager</div>
+      <div style="font-size:0.85rem;color:#4A9B60;margin-top:4px;">bioessere · studio</div>
+    </div>
+    <div style="background:white;border-radius:16px;border:0.5px solid #e0e0e0;padding:1.5rem;">
+      <div style="font-size:0.75rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem;">Password</div>
+      <input type="password" id="pwd-input" class="form-input" placeholder="Inserisci la password" style="font-size:16px;margin-bottom:1rem;" onkeydown="if(event.key==='Enter')checkPassword()">
+      <button class="btn btn-verde btn-full" onclick="checkPassword()">Accedi</button>
+      <div id="pwd-error" style="color:#a00;font-size:0.8rem;text-align:center;margin-top:0.75rem;display:none;">Password errata. Riprova.</div>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="header-title">🌿 Biodanza Manager</div>
+    <div class="header-sub">bioessere · studio · v1.6</div>
+  </div>
+  <div class="header-icon">☀️</div>
+</div>
+
+<!-- PANELS -->
+
+<!-- 0. ISTRUZIONI -->
+<div class="panel active" id="panel-istruzioni">
+  <div class="section-header">
+    <div class="section-title">Guida all'uso</div>
+  </div>
+
+  <div class="card" style="margin-bottom:0.6rem;">
+    <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="toggleAccordion('acc-intro')">
+      <div style="font-weight:700;color:#2A6B40;font-size:0.95rem;">🌿 Panoramica</div>
+      <span id="acc-intro-icon" style="color:#4A9B60;font-size:1.1rem;">+</span>
+    </div>
+    <div id="acc-intro" style="display:none;margin-top:0.75rem;font-size:0.85rem;color:#444;line-height:1.6;">
+      <b>Biodanza Manager</b> è un'app per la gestione di una palestra di Biodanza. Permette di registrare i partecipanti, documentare ogni sessione, monitorare le presenze e raccogliere feedback. Tutti i dati sono salvati localmente sul dispositivo (localStorage). L'app è accessibile tramite browser dopo il deploy su GitHub Pages.
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:0.6rem;">
+    <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="toggleAccordion('acc-anagrafica')">
+      <div style="font-weight:700;color:#2A6B40;font-size:0.95rem;">👤 Anagrafica Utenti</div>
+      <span id="acc-anagrafica-icon" style="color:#4A9B60;font-size:1.1rem;">+</span>
+    </div>
+    <div id="acc-anagrafica" style="display:none;margin-top:0.75rem;font-size:0.85rem;color:#444;line-height:1.6;">
+      Contiene la lista di tutti i partecipanti. Per ogni utente puoi inserire: nome e cognome, telefono/WhatsApp, email, data di nascita (l'età viene calcolata automaticamente), data di iscrizione, certificato medico (Sì/No — mostrato come badge colorato nella lista), note libere.<br><br>
+      <b>+ Nuovo</b> → apre il form di inserimento.<br>
+      <b>✎</b> → riapre il form precompilato per modificare i dati.<br>
+      <b>✕</b> → elimina l'utente (con conferma).
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:0.6rem;">
+    <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="toggleAccordion('acc-calendario')">
+      <div style="font-weight:700;color:#2A6B40;font-size:0.95rem;">📅 Calendario</div>
+      <span id="acc-calendario-icon" style="color:#4A9B60;font-size:1.1rem;">+</span>
+    </div>
+    <div id="acc-calendario" style="display:none;margin-top:0.75rem;font-size:0.85rem;color:#444;line-height:1.6;">
+      Vista mensile del calendario. Il giorno odierno è evidenziato in verde. I giorni con almeno una sessione registrata mostrano un <b>pallino viola</b> in basso. Sotto il calendario appare la lista delle sessioni del mese selezionato con tema e numero di presenti. Usa ‹ › per navigare tra i mesi.
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:0.6rem;">
+    <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="toggleAccordion('acc-sessioni')">
+      <div style="font-weight:700;color:#2A6B40;font-size:0.95rem;">🎵 Sessioni</div>
+      <span id="acc-sessioni-icon" style="color:#4A9B60;font-size:1.1rem;">+</span>
+    </div>
+    <div id="acc-sessioni" style="display:none;margin-top:0.75rem;font-size:0.85rem;color:#444;line-height:1.6;">
+      Qui si registrano le sessioni. Per ogni sessione: data, tema (scelto dalla Biblioteca o scritto liberamente), presenti (spunta i partecipanti dalla lista anagrafica), note del conduttore, feedback raccolti a voce.<br><br>
+      Sotto il form appare la lista di tutte le sessioni registrate in ordine cronologico inverso. Ogni sessione mostra tema, data, numero presenti e nomi. <b>✕</b> elimina la sessione.
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:0.6rem;">
+    <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="toggleAccordion('acc-dashboard')">
+      <div style="font-weight:700;color:#2A6B40;font-size:0.95rem;">📊 Dashboard</div>
+      <span id="acc-dashboard-icon" style="color:#4A9B60;font-size:1.1rem;">+</span>
+    </div>
+    <div id="acc-dashboard" style="display:none;margin-top:0.75rem;font-size:0.85rem;color:#444;line-height:1.6;">
+      Panoramica statistica automatica aggiornata in tempo reale.<br><br>
+      <b>Tre metriche in evidenza:</b> totale utenti, totale sessioni, totale presenze cumulative.<br>
+      <b>Grafico a barre:</b> presenze mensili nell'anno in corso.<br>
+      <b>Frequenza per utente:</b> barra di partecipazione di ogni utente (presenze / sessioni totali %).<br>
+      <b>Temi più usati:</b> classifica dei 5 temi più frequenti nelle sessioni registrate.
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:0.6rem;">
+    <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="toggleAccordion('acc-biblioteca')">
+      <div style="font-weight:700;color:#2A6B40;font-size:0.95rem;">📚 Biblioteca Tematica</div>
+      <span id="acc-biblioteca-icon" style="color:#4A9B60;font-size:1.1rem;">+</span>
+    </div>
+    <div id="acc-biblioteca" style="display:none;margin-top:0.75rem;font-size:0.85rem;color:#444;line-height:1.6;">
+      Archivio dei temi Biodanza usati nelle sessioni. Ogni tema ha: nome, descrizione, esercizi suggeriti, musiche suggerite (solo testo descrittivo, non file audio).<br><br>
+      I temi salvati qui appaiono nel menu a tendina quando si registra una nuova sessione. È un promemoria strutturato per il conduttore, non influenza le statistiche. <b>+ Tema</b> aggiunge un nuovo tema. <b>✕</b> lo elimina.
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:0.6rem;">
+    <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="toggleAccordion('acc-feedback')">
+      <div style="font-weight:700;color:#2A6B40;font-size:0.95rem;">💬 Feedback</div>
+      <span id="acc-feedback-icon" style="color:#4A9B60;font-size:1.1rem;">+</span>
+    </div>
+    <div id="acc-feedback" style="display:none;margin-top:0.75rem;font-size:0.85rem;color:#444;line-height:1.6;">
+      Permette di raccogliere feedback dai partecipanti tramite un link condivisibile su WhatsApp.<br><br>
+      <b>Come funziona:</b><br>
+      1. Scegli la sessione dal menu.<br>
+      2. L'app genera un link URL univoco per quella sessione.<br>
+      3. Premi <b>Copia</b> e incollalo su WhatsApp al gruppo.<br>
+      4. Il partecipante apre il link dal telefono e trova: 8 risposte prefissate a scelta singola, voto da 1 a 5 stelle, nota libera opzionale.<br>
+      5. Le risposte appaiono nella sezione <i>Risposte ricevute</i>.<br><br>
+      <b>Importante:</b> il link funziona solo se l'app è pubblicata su GitHub Pages. Non funziona aprendo il file HTML direttamente dal computer.
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:0.6rem;">
+    <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="toggleAccordion('acc-pagamenti')">
+      <div style="font-weight:700;color:#2A6B40;font-size:0.95rem;">💳 Pagamenti</div>
+      <span id="acc-pagamenti-icon" style="color:#4A9B60;font-size:1.1rem;">+</span>
+    </div>
+    <div id="acc-pagamenti" style="display:none;margin-top:0.75rem;font-size:0.85rem;color:#444;line-height:1.6;">
+      Traccia i pagamenti dei partecipanti. Tre tipi: <b>pacchetto</b> (n° sessioni incluse, le residue si calcolano automaticamente dalle presenze registrate dopo la data del pagamento), <b>abbonamento</b> (scadenza obbligatoria), <b>sessione singola</b>.<br><br>
+      Badge stato: <span style="color:#2A6B40;">verde</span> = attivo/sessioni sufficienti, <span style="color:#7A6B00;">giallo</span> = in scadenza o poche sessioni residue, <span style="color:#a00;">rosso</span> = scaduto o esaurito.<br><br>
+      In cima al pannello: incassato del mese corrente e numero di pagamenti da rinnovare. <b>+ Pagamento</b> apre il form. <b>✕</b> elimina il pagamento.<br><br>
+      <b>Stato pagamento per sessione:</b> nella lista di "Sessioni registrate" ogni presente mostra un badge ✓ (pagato) o ✕ (non pagato), calcolato automaticamente in base ad abbonamenti attivi, pacchetti con sessioni residue o pagamenti singoli collegati. Cliccando sul badge puoi forzare manualmente lo stato (pagato → non pagato → automatico); lo stato manuale è indicato con un asterisco *.<br><br>
+      <b>Nota:</b> è solo tracciamento manuale, non gestisce transazioni reali online.
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:0.6rem;">
+    <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="toggleAccordion('acc-password')">
+      <div style="font-weight:700;color:#2A6B40;font-size:0.95rem;">🔒 Password e accesso</div>
+      <span id="acc-password-icon" style="color:#4A9B60;font-size:1.1rem;">+</span>
+    </div>
+    <div id="acc-password" style="display:none;margin-top:0.75rem;font-size:0.85rem;color:#444;line-height:1.6;">
+      L'app è protetta da password. La sessione viene ricordata per 7 giorni: non è necessario reinserire la password ad ogni apertura. Dopo 7 giorni viene richiesta nuovamente. I dati sono salvati localmente sul dispositivo in uso — non vengono trasmessi a server esterni.
+    </div>
+  </div>
+
+</div>
+
+<!-- 1. ANAGRAFICA -->
+<div class="panel active" id="panel-anagrafica">
+  <div class="section-header">
+    <div class="section-title">Anagrafica Utenti</div>
+    <button class="btn btn-verde btn-sm" onclick="openNuovoUtente()">+ Nuovo</button>
+  </div>
+  <div id="lista-utenti">
+    <div class="empty-state">
+      <div class="empty-icon">👤</div>
+      <p>Nessun utente ancora.<br>Aggiungi il primo partecipante.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 2. CALENDARIO -->
+<div class="panel" id="panel-calendario">
+  <div class="card">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="calPrev()">‹</button>
+      <span class="cal-month" id="cal-month-label"></span>
+      <button class="cal-nav-btn" onclick="calNext()">›</button>
+    </div>
+    <div class="cal-grid" id="cal-days-names"></div>
+    <div class="cal-grid" id="cal-days"></div>
+  </div>
+  <div class="section-header" style="margin-top:0.25rem;">
+    <div class="section-title">Sessioni del mese</div>
+  </div>
+  <div id="lista-sessioni-cal"></div>
+</div>
+
+<!-- 3. REGISTRAZIONE SESSIONE -->
+<div class="panel" id="panel-sessione">
+  <div class="section-header">
+    <div class="section-title" id="sess-form-title">Nuova Sessione</div>
+    <button class="btn btn-sm" id="sess-annulla-btn" style="display:none;background:var(--gray-light);color:var(--gray);" onclick="annullaModificaSessione()">✕ Annulla</button>
+  </div>
+  <input type="hidden" id="sess-id">
+  <div class="card">
+    <div class="form-group">
+      <label class="form-label">Data</label>
+      <input type="date" class="form-input" id="sess-data">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tema / Argomento</label>
+      <select class="form-select" id="sess-tema">
+        <option value="">— Scegli dalla biblioteca o scrivi —</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tema personalizzato</label>
+      <input type="text" class="form-input" id="sess-tema-custom" placeholder="Es. Leggerezza e movimento libero">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Progettazione</label>
+      <textarea class="form-textarea" id="sess-progettazione" placeholder="Struttura, obiettivi e progressione della sessione..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Presenti</label>
+      <div class="check-grid" id="presenti-grid">
+        <div style="color:var(--gray); font-size:0.8rem; padding:0.5rem 0;">Aggiungi utenti in Anagrafica prima.</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Note del conduttore</label>
+      <textarea class="form-textarea" id="sess-note" placeholder="Osservazioni, dinamiche di gruppo, momenti significativi..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Feedback raccolto</label>
+      <textarea class="form-textarea" id="sess-feedback" placeholder="Feedback verbali raccolti durante/dopo la sessione..."></textarea>
+    </div>
+    <button class="btn btn-verde btn-full" id="sess-submit-btn" onclick="salvaSessione()">Salva Sessione</button>
+  </div>
+
+  <div class="section-header" style="margin-top:1rem;">
+    <div class="section-title">Sessioni registrate</div>
+  </div>
+  <div id="lista-sessioni"></div>
+</div>
+
+<!-- 4. DASHBOARD -->
+<div class="panel" id="panel-dashboard">
+  <div class="metric-grid">
+    <div class="metric-card verde">
+      <div class="metric-val verde" id="stat-utenti">0</div>
+      <div class="metric-label verde">Utenti</div>
+    </div>
+    <div class="metric-card giallo">
+      <div class="metric-val giallo" id="stat-sessioni">0</div>
+      <div class="metric-label giallo">Sessioni</div>
+    </div>
+    <div class="metric-card lilla">
+      <div class="metric-val lilla" id="stat-presenze">0</div>
+      <div class="metric-label lilla">Presenze tot.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title verde">Presenze per mese</div>
+    <div class="chart-wrap"><canvas id="chart-presenze"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title lilla">Frequenza per utente</div>
+    <div id="freq-utenti"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title giallo">Temi più usati</div>
+    <div id="temi-usati"></div>
+  </div>
+</div>
+
+<!-- 5. BIBLIOTECA TEMATICA -->
+<div class="panel" id="panel-biblioteca">
+  <div class="section-header">
+    <div class="section-title">Temi Biodanza</div>
+    <button class="btn btn-lilla btn-sm" onclick="openNuovoTema()">+ Tema</button>
+  </div>
+  <div id="lista-temi"></div>
+</div>
+
+<!-- 6. FEEDBACK -->
+<div class="panel" id="panel-feedback">
+  <div class="card">
+    <div class="card-title lilla">Link Feedback per WhatsApp</div>
+    <p style="font-size:0.8rem; color:var(--gray); margin-bottom:0.75rem;">Seleziona la sessione e condividi il link con i partecipanti.</p>
+    <div class="form-group">
+      <label class="form-label">Sessione</label>
+      <select class="form-select" id="fb-sessione-sel" onchange="generaLinkFeedback()">
+        <option value="">— Scegli sessione —</option>
+      </select>
+    </div>
+    <div id="feedback-link-box"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title verde">Risposte ricevute</div>
+    <div id="lista-feedback"></div>
+  </div>
+</div>
+
+<!-- 7. PAGAMENTI -->
+<div class="panel" id="panel-pagamenti">
+  <div class="metric-grid" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="metric-card verde">
+      <div class="metric-val verde" id="pag-stat-incassato">€0</div>
+      <div class="metric-label verde">Incassato mese</div>
+    </div>
+    <div class="metric-card giallo">
+      <div class="metric-val giallo" id="pag-stat-scadenze">0</div>
+      <div class="metric-label giallo">Da rinnovare</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">Pagamenti</div>
+    <button class="btn btn-verde btn-sm" onclick="openNuovoPagamento()">+ Pagamento</button>
+  </div>
+  <div id="lista-pagamenti"></div>
+</div>
+
+<!-- NAV BAR -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="goPanel('istruzioni',this)">
+    <div class="nav-icon">❓</div>Guida
+  </button>
+  <button class="nav-btn" onclick="goPanel('anagrafica',this)">
+    <div class="nav-icon">👤</div>Anagrafica
+  </button>
+  <button class="nav-btn" onclick="goPanel('calendario',this)">
+    <div class="nav-icon">📅</div>Calendario
+  </button>
+  <button class="nav-btn" onclick="goPanel('sessione',this)">
+    <div class="nav-icon">🎵</div>Sessioni
+  </button>
+  <button class="nav-btn" onclick="goPanel('dashboard',this)">
+    <div class="nav-icon">📊</div>Dashboard
+  </button>
+  <button class="nav-btn" onclick="goPanel('biblioteca',this)">
+    <div class="nav-icon">📚</div>Biblioteca
+  </button>
+  <button class="nav-btn" onclick="goPanel('feedback',this)">
+    <div class="nav-icon">💬</div>Feedback
+  </button>
+  <button class="nav-btn" onclick="goPanel('pagamenti',this)">
+    <div class="nav-icon">💳</div>Pagamenti
+  </button>
+</nav>
+
+<!-- MODALS -->
+
+<!-- Modal Utente -->
+<div class="modal-overlay" id="modal-utente">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-utente-title">Nuovo Utente</div>
+    <input type="hidden" id="u-id">
+    <div class="form-group">
+      <label class="form-label">Nome e Cognome *</label>
+      <input type="text" class="form-input" id="u-nome" placeholder="Es. Maria Rossi">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Telefono / WhatsApp</label>
+      <input type="tel" class="form-input" id="u-tel" placeholder="+39 333 000 0000">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" id="u-email" placeholder="maria@email.com">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div class="form-group">
+        <label class="form-label">Data di nascita</label>
+        <input type="date" class="form-input" id="u-nascita">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Data iscrizione</label>
+        <input type="date" class="form-input" id="u-data">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Certificato medico</label>
+      <div style="display:flex;gap:10px;margin-top:2px;">
+        <label style="display:flex;align-items:center;gap:6px;padding:0.5rem 0.875rem;border-radius:8px;border:1px solid var(--border);cursor:pointer;flex:1;font-size:0.875rem;" id="cert-si-label">
+          <input type="radio" name="certificato" value="si" id="cert-si" onchange="updateCertLabel()"> Sì ✓
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;padding:0.5rem 0.875rem;border-radius:8px;border:1px solid var(--border);cursor:pointer;flex:1;font-size:0.875rem;" id="cert-no-label">
+          <input type="radio" name="certificato" value="no" id="cert-no" checked onchange="updateCertLabel()"> No ✗
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Note</label>
+      <textarea class="form-textarea" id="u-note" placeholder="Eventuali note sul partecipante..."></textarea>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-verde btn-full" onclick="salvaUtente()">Salva</button>
+      <button class="btn btn-full" style="background:var(--gray-light);" onclick="closeModal('modal-utente')">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Tema -->
+<div class="modal-overlay" id="modal-tema">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-tema-title">Nuovo Tema</div>
+    <input type="hidden" id="t-id">
+    <div class="form-group">
+      <label class="form-label">Nome tema *</label>
+      <input type="text" class="form-input" id="t-nome" placeholder="Es. Fluidità e radicamento">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descrizione</label>
+      <textarea class="form-textarea" id="t-desc" placeholder="Obiettivo e contesto del tema..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Esercizi principali</label>
+      <textarea class="form-textarea" id="t-esercizi" placeholder="Es. Movimenti fluidi in coppia, contatto col suolo..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Musiche suggerite</label>
+      <input type="text" class="form-input" id="t-musiche" placeholder="Es. Ludovico Einaudi, Nuvole Bianche">
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-lilla btn-full" onclick="salvaTema()">Salva</button>
+      <button class="btn btn-full" style="background:var(--gray-light);" onclick="closeModal('modal-tema')">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Pagamento -->
+<div class="modal-overlay" id="modal-pagamento">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Nuovo Pagamento</div>
+    <div class="form-group">
+      <label class="form-label">Utente *</label>
+      <select class="form-select" id="pag-utente" onchange="onPagUtenteChange()">
+        <option value="">— Scegli utente —</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tipo pagamento *</label>
+      <select class="form-select" id="pag-tipo" onchange="updatePagamentoFields()">
+        <option value="pacchetto">Pacchetto a sessioni</option>
+        <option value="abbonamento">Abbonamento periodico</option>
+        <option value="singola">Sessione singola</option>
+      </select>
+    </div>
+    <div class="form-group" id="pag-sessione-group" style="display:none;">
+      <label class="form-label">Sessione collegata *</label>
+      <select class="form-select" id="pag-sessione">
+        <option value="">— Scegli sessione —</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div class="form-group">
+        <label class="form-label">Importo (€) *</label>
+        <input type="number" step="0.01" min="0" class="form-input" id="pag-importo" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Data pagamento</label>
+        <input type="date" class="form-input" id="pag-data">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Metodo</label>
+      <select class="form-select" id="pag-metodo">
+        <option value="Contanti">Contanti</option>
+        <option value="Bonifico">Bonifico</option>
+        <option value="Altro">Altro</option>
+      </select>
+    </div>
+    <div class="form-group" id="pag-sessioni-group">
+      <label class="form-label">Sessioni incluse</label>
+      <input type="number" min="1" class="form-input" id="pag-sessioni-incluse" placeholder="Es. 10">
+    </div>
+    <div class="form-group" id="pag-scadenza-group">
+      <label class="form-label">Scadenza <span id="pag-scadenza-opt" style="text-transform:none;">(opzionale)</span></label>
+      <input type="date" class="form-input" id="pag-scadenza">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Note</label>
+      <textarea class="form-textarea" id="pag-note" placeholder="Note facoltative..."></textarea>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-verde btn-full" onclick="salvaPagamento()">Salva</button>
+      <button class="btn btn-full" style="background:var(--gray-light);" onclick="closeModal('modal-pagamento')">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ==================== STATE ====================
+let state = {
+  utenti: [],
+  sessioni: [],
+  temi: [],
+  feedback: [],
+  pagamenti: []
+};
+
+function load() {
+  const saved = localStorage.getItem('biodanza_v1');
+  if (saved) state = JSON.parse(saved);
+  // migrazione: assicura presenza array pagamenti nei salvataggi precedenti
+  if (!state.pagamenti) state.pagamenti = [];
+  // migrazione: rimuovi Fluidità, aggiungi Sessualità se manca
+  state.temi = state.temi.filter(t => t.nome !== 'Fluidità');
+  if (!state.temi.some(t => t.nome === 'Sessualità')) {
+    state.temi.push({ id: uid(), nome: 'Sessualità', desc: 'Riconnessione con la propria energia vitale sessuale, gioia del corpo, sensorialità.', esercizi: 'Danze sensuali, movimenti del bacino, espressione corporea libera', musiche: 'Salsa, bossa nova, ritmi latini' });
+  }
+  save();
+  // default temi se vuoti
+  if (state.temi.length === 0) {
+    state.temi = [
+      { id: uid(), nome: 'Vitalità', desc: 'Risveglio dell\'energia vitale attraverso il movimento.', esercizi: 'Danze di attivazione, movimenti spontanei', musiche: 'Ritmi africani, percussioni' },
+      { id: uid(), nome: 'Sessualità', desc: 'Riconnessione con la propria energia vitale sessuale, gioia del corpo, sensorialità.', esercizi: 'Danze sensuali, movimenti del bacino, espressione corporea libera', musiche: 'Salsa, bossa nova, ritmi latini' },
+      { id: uid(), nome: 'Affettività', desc: 'Contatto, calore umano, apertura del cuore.', esercizi: 'Danze in coppia, abbracci consapevoli', musiche: 'Bossa nova, jazz morbido' },
+      { id: uid(), nome: 'Creatività', desc: 'Espressione libera, gioco, spontaneità.', esercizi: 'Improvvisazione, danza creativa', musiche: 'Musica contemporanea, ambient' },
+      { id: uid(), nome: 'Trascendenza', desc: 'Stati di espansione, connessione con il tutto.', esercizi: 'Danze cosmiche, movimento meditativo', musiche: 'Musica sacra, canti dei nativi' },
+    ];
+    save();
+  }
+}
+
+function save() {
+  localStorage.setItem('biodanza_v1', JSON.stringify(state));
+}
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+// ==================== TOAST ====================
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ==================== NAVIGATION ====================
+function goPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'calendario') renderCalendario();
+  if (name === 'sessione') renderSessionePanel();
+  if (name === 'feedback') renderFeedbackPanel();
+  if (name === 'biblioteca') renderBiblioteca();
+  if (name === 'anagrafica') renderUtenti();
+  if (name === 'pagamenti') renderPagamenti();
+}
+
+// ==================== MODAL ====================
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ==================== UTENTI ====================
+function initials(nome) {
+  return nome.split(' ').map(p => p[0]).join('').toUpperCase().slice(0,2);
+}
+const avatarColors = [
+  ['#EDF7F0','#2A6B40'], ['#F7E8F5','#5A1A4A'], ['#FEFBE8','#7A6B00'],
+  ['#E6F1FB','#185FA5'], ['#FCF0EE','#8B3A2A']
+];
+function avatarColor(i) { return avatarColors[i % avatarColors.length]; }
+
+function updateCertLabel() {
+  const si = document.getElementById('cert-si').checked;
+  document.getElementById('cert-si-label').style.background = si ? '#EDF7F0' : '';
+  document.getElementById('cert-si-label').style.borderColor = si ? '#B8E6C4' : '';
+  document.getElementById('cert-no-label').style.background = !si ? '#fff0f0' : '';
+  document.getElementById('cert-no-label').style.borderColor = !si ? '#ffb8b8' : '';
+}
+
+function openNuovoUtente() {
+  document.getElementById('modal-utente-title').textContent = 'Nuovo Utente';
+  document.getElementById('u-id').value = '';
+  ['u-nome','u-tel','u-email','u-nascita','u-data','u-note'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('cert-no').checked = true;
+  updateCertLabel();
+  openModal('modal-utente');
+}
+
+function openModificaUtente(id) {
+  const u = state.utenti.find(u => u.id === id);
+  if (!u) return;
+  document.getElementById('modal-utente-title').textContent = 'Modifica Utente';
+  document.getElementById('u-id').value = u.id;
+  document.getElementById('u-nome').value = u.nome || '';
+  document.getElementById('u-tel').value = u.tel || '';
+  document.getElementById('u-email').value = u.email || '';
+  document.getElementById('u-nascita').value = u.nascita || '';
+  document.getElementById('u-data').value = u.data || '';
+  document.getElementById('u-note').value = u.note || '';
+  if (u.certificato === 'si') { document.getElementById('cert-si').checked = true; }
+  else { document.getElementById('cert-no').checked = true; }
+  updateCertLabel();
+  openModal('modal-utente');
+}
+
+function salvaUtente() {
+  const nome = document.getElementById('u-nome').value.trim();
+  if (!nome) { toast('Inserisci nome e cognome'); return; }
+  const id = document.getElementById('u-id').value;
+  const certificato = document.getElementById('cert-si').checked ? 'si' : 'no';
+  const dati = {
+    nome,
+    tel: document.getElementById('u-tel').value.trim(),
+    email: document.getElementById('u-email').value.trim(),
+    nascita: document.getElementById('u-nascita').value,
+    data: document.getElementById('u-data').value,
+    certificato,
+    note: document.getElementById('u-note').value.trim()
+  };
+  if (id) {
+    const idx = state.utenti.findIndex(u => u.id === id);
+    if (idx >= 0) state.utenti[idx] = { ...state.utenti[idx], ...dati };
+    toast('Utente aggiornato ✓');
+  } else {
+    state.utenti.push({ id: uid(), ...dati });
+    toast('Utente salvato ✓');
+  }
+  save();
+  closeModal('modal-utente');
+  renderUtenti();
+}
+
+function eliminaUtente(id) {
+  if (!confirm('Eliminare questo utente?')) return;
+  state.utenti = state.utenti.filter(u => u.id !== id);
+  save();
+  renderUtenti();
+  toast('Utente eliminato');
+}
+
+function renderUtenti() {
+  const el = document.getElementById('lista-utenti');
+  if (state.utenti.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">👤</div><p>Nessun utente ancora.<br>Aggiungi il primo partecipante.</p></div>';
+    return;
+  }
+  el.innerHTML = state.utenti.map((u, i) => {
+    const [bg, fg] = avatarColor(i);
+    const sessCount = state.sessioni.filter(s => s.presenti && s.presenti.includes(u.id)).length;
+    const certBadge = u.certificato === 'si'
+      ? `<span class="pill pill-verde" style="font-size:0.65rem;">cert. ✓</span>`
+      : `<span class="pill" style="background:#fff0f0;color:#a00;border:1px solid #ffb8b8;font-size:0.65rem;">cert. ✗</span>`;
+    const eta = u.nascita ? (() => { const a = new Date().getFullYear() - new Date(u.nascita).getFullYear(); return `${a} anni · `; })() : '';
+    return `<div class="card" style="margin-bottom:0.6rem;">
+      <div class="list-item" style="border:none;padding:0;">
+        <div class="list-item-left">
+          <div class="list-item-avatar" style="background:${bg};color:${fg};">${initials(u.nome)}</div>
+          <div style="min-width:0;">
+            <div class="list-item-name">${u.nome}</div>
+            <div class="list-item-sub">${eta}${u.tel || u.email || '—'} · ${sessCount} sess.</div>
+          </div>
+        </div>
+        <div class="list-item-actions">
+          ${certBadge}
+          <button class="btn btn-sm btn-giallo" onclick="openModificaUtente('${u.id}')">✎</button>
+          <button class="btn btn-sm btn-danger" onclick="eliminaUtente('${u.id}')">✕</button>
+        </div>
+      </div>
+      ${u.note ? `<div style="margin-top:0.5rem;font-size:0.78rem;color:var(--gray);border-top:0.5px solid #f0f0f0;padding-top:0.5rem;">${u.note}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ==================== SESSIONI ====================
+function renderSessionePanel() {
+  // presenti grid
+  const grid = document.getElementById('presenti-grid');
+  if (state.utenti.length === 0) {
+    grid.innerHTML = '<div style="color:var(--gray);font-size:0.8rem;padding:0.5rem 0;">Aggiungi utenti in Anagrafica prima.</div>';
+  } else {
+    grid.innerHTML = state.utenti.map(u => `
+      <label class="check-item" id="chk-${u.id}">
+        <input type="checkbox" value="${u.id}" onchange="toggleCheck(this)">
+        <span class="check-item-name">${u.nome}</span>
+      </label>`).join('');
+  }
+  // tema select
+  const sel = document.getElementById('sess-tema');
+  sel.innerHTML = '<option value="">— Scegli dalla biblioteca —</option>' +
+    state.temi.map(t => `<option value="${t.nome}">${t.nome}</option>`).join('');
+  // data default oggi solo se non si sta modificando
+  const inModifica = document.getElementById('sess-id') && document.getElementById('sess-id').value;
+  if (!inModifica && !document.getElementById('sess-data').value) {
+    document.getElementById('sess-data').value = new Date().toISOString().slice(0,10);
+  }
+  renderListaSessioni();
+}
+
+function toggleCheck(cb) {
+  cb.closest('.check-item').classList.toggle('checked', cb.checked);
+}
+
+function resetFormSessione() {
+  document.getElementById('sess-id').value = '';
+  document.getElementById('sess-data').value = new Date().toISOString().slice(0,10);
+  document.getElementById('sess-tema').value = '';
+  document.getElementById('sess-tema-custom').value = '';
+  document.getElementById('sess-progettazione').value = '';
+  document.getElementById('sess-note').value = '';
+  document.getElementById('sess-feedback').value = '';
+  document.querySelectorAll('#presenti-grid input').forEach(c => {
+    c.checked = false;
+    c.closest('.check-item').classList.remove('checked');
+  });
+  document.getElementById('sess-form-title').textContent = 'Nuova Sessione';
+  document.getElementById('sess-submit-btn').textContent = 'Salva Sessione';
+  document.getElementById('sess-submit-btn').className = 'btn btn-verde btn-full';
+  document.getElementById('sess-annulla-btn').style.display = 'none';
+}
+
+function annullaModificaSessione() {
+  resetFormSessione();
+  toast('Modifica annullata');
+}
+
+function modificaSessione(id) {
+  const s = state.sessioni.find(s => s.id === id);
+  if (!s) return;
+  // scroll in cima al pannello
+  document.getElementById('panel-sessione').scrollTop = 0;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // popola form
+  document.getElementById('sess-id').value = s.id;
+  document.getElementById('sess-data').value = s.data;
+  // tema: prova a selezionarlo dal menu, altrimenti metti nel custom
+  const opt = [...document.querySelectorAll('#sess-tema option')].find(o => o.value === s.tema);
+  if (opt) {
+    document.getElementById('sess-tema').value = s.tema;
+    document.getElementById('sess-tema-custom').value = '';
+  } else {
+    document.getElementById('sess-tema').value = '';
+    document.getElementById('sess-tema-custom').value = s.tema;
+  }
+  // presenti
+  document.querySelectorAll('#presenti-grid input').forEach(c => {
+    const checked = s.presenti.includes(c.value);
+    c.checked = checked;
+    c.closest('.check-item').classList.toggle('checked', checked);
+  });
+  document.getElementById('sess-progettazione').value = s.progettazione || '';
+  document.getElementById('sess-note').value = s.note || '';
+  document.getElementById('sess-feedback').value = s.feedback || '';
+  // aggiorna UI form
+  document.getElementById('sess-form-title').textContent = 'Modifica Sessione';
+  document.getElementById('sess-submit-btn').textContent = 'Aggiorna Sessione';
+  document.getElementById('sess-submit-btn').className = 'btn btn-giallo btn-full';
+  document.getElementById('sess-annulla-btn').style.display = 'inline-flex';
+}
+
+function salvaSessione() {
+  const data = document.getElementById('sess-data').value;
+  if (!data) { toast('Inserisci la data'); return; }
+  const temaSelect = document.getElementById('sess-tema').value;
+  const temaCustom = document.getElementById('sess-tema-custom').value.trim();
+  const tema = temaCustom || temaSelect;
+  if (!tema) { toast('Inserisci o scegli un tema'); return; }
+  const presenti = [...document.querySelectorAll('#presenti-grid input:checked')].map(c => c.value);
+  const idEsistente = document.getElementById('sess-id').value;
+  if (idEsistente) {
+    // MODIFICA
+    const idx = state.sessioni.findIndex(s => s.id === idEsistente);
+    if (idx >= 0) {
+      state.sessioni[idx] = { ...state.sessioni[idx], data, tema, presenti,
+        progettazione: document.getElementById('sess-progettazione').value.trim(),
+        note: document.getElementById('sess-note').value.trim(),
+        feedback: document.getElementById('sess-feedback').value.trim()
+      };
+    }
+    toast('Sessione aggiornata ✓');
+  } else {
+    // NUOVA
+    state.sessioni.push({
+      id: uid(), data, tema, presenti,
+      progettazione: document.getElementById('sess-progettazione').value.trim(),
+      note: document.getElementById('sess-note').value.trim(),
+      feedback: document.getElementById('sess-feedback').value.trim()
+    });
+    toast('Sessione salvata ✓');
+  }
+  save();
+  resetFormSessione();
+  renderListaSessioni();
+}
+
+function duplicaSessione(id) {
+  const s = state.sessioni.find(s => s.id === id);
+  if (!s) return;
+  const nuovoId = uid();
+  const copia = { ...s, id: nuovoId };
+  state.sessioni.push(copia);
+  save();
+  renderListaSessioni();
+  // apre subito in modifica
+  modificaSessione(nuovoId);
+  toast('Sessione duplicata — modifica e salva ✓');
+}
+
+function eliminaSessione(id) {
+  if (!confirm('Eliminare questa sessione?')) return;
+  state.sessioni = state.sessioni.filter(s => s.id !== id);
+  save();
+  renderListaSessioni();
+  toast('Sessione eliminata');
+}
+
+function renderListaSessioni() {
+  const el = document.getElementById('lista-sessioni');
+  const sorted = [...state.sessioni].sort((a,b) => b.data.localeCompare(a.data));
+  if (sorted.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🎵</div><p>Nessuna sessione ancora.</p></div>';
+    return;
+  }
+  el.innerHTML = sorted.map(s => {
+    const badgePresenti = s.presenti.map(id => {
+      const u = state.utenti.find(u => u.id === id);
+      const nome = u ? u.nome.split(' ')[0] : '?';
+      const st = pagamentoSessioneStato(id, s.id);
+      const cls = st.pagato ? 'verde' : 'rosso';
+      const icon = st.pagato ? '✓' : '✕';
+      return `<span class="pill pill-${cls}" style="cursor:pointer;margin:2px 4px 2px 0;" onclick="togglePagamentoOverride('${s.id}','${id}')" title="Clicca per correggere manualmente">${nome} ${icon}${st.manuale ? ' *' : ''}</span>`;
+    }).join('');
+    return `<div class="card" style="margin-bottom:0.6rem;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div style="min-width:0;flex:1;">
+          <div style="font-weight:700;font-size:0.9rem;color:var(--lilla-scuro);">${s.tema}</div>
+          <div style="font-size:0.75rem;color:var(--gray);margin-top:2px;">${formatData(s.data)}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+          <span class="pill pill-verde">${s.presenti.length} pres.</span>
+          <button class="btn btn-sm btn-verde" onclick="duplicaSessione('${s.id}')" title="Duplica">⧉</button>
+          <button class="btn btn-sm btn-giallo" onclick="modificaSessione('${s.id}')">✎</button>
+          <button class="btn btn-sm btn-danger" onclick="eliminaSessione('${s.id}')">✕</button>
+        </div>
+      </div>
+      ${badgePresenti ? `<div style="margin-top:8px;">${badgePresenti}</div>` : ''}
+      ${s.progettazione ? `<div style="font-size:0.78rem;color:var(--text);margin-top:6px;border-top:0.5px solid #f0f0f0;padding-top:6px;"><b style="color:var(--verde-mid);">Progettazione:</b> ${s.progettazione}</div>` : ''}
+      ${s.note ? `<div style="font-size:0.78rem;color:var(--gray);margin-top:6px;border-top:0.5px solid #f0f0f0;padding-top:6px;">${s.note}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ==================== CALENDARIO ====================
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+function calPrev() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendario(); }
+function calNext() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendario(); }
+
+function renderCalendario() {
+  const nomiGiorni = ['L','M','M','G','V','S','D'];
+  document.getElementById('cal-days-names').innerHTML = nomiGiorni.map(g => `<div class="cal-day-name">${g}</div>`).join('');
+  const mesi = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  document.getElementById('cal-month-label').textContent = `${mesi[calMonth]} ${calYear}`;
+  const primo = new Date(calYear, calMonth, 1);
+  const ultimoGiorno = new Date(calYear, calMonth + 1, 0).getDate();
+  let startDay = primo.getDay(); // 0=dom
+  startDay = startDay === 0 ? 6 : startDay - 1; // converti a lun=0
+  const oggi = new Date();
+  const sessioniMese = state.sessioni.filter(s => {
+    const d = new Date(s.data);
+    return d.getFullYear() === calYear && d.getMonth() === calMonth;
+  });
+  const giorniConSessione = new Set(sessioniMese.map(s => parseInt(s.data.split('-')[2])));
+  let html = '';
+  for (let i = 0; i < startDay; i++) html += '<div class="cal-day empty"></div>';
+  for (let d = 1; d <= ultimoGiorno; d++) {
+    const isOggi = d === oggi.getDate() && calMonth === oggi.getMonth() && calYear === oggi.getFullYear();
+    const hasSess = giorniConSessione.has(d);
+    html += `<div class="cal-day ${isOggi ? 'today' : ''} ${hasSess ? 'has-session' : ''}">${d}</div>`;
+  }
+  document.getElementById('cal-days').innerHTML = html;
+
+  // lista sessioni del mese
+  const el = document.getElementById('lista-sessioni-cal');
+  if (sessioniMese.length === 0) {
+    el.innerHTML = '<div class="empty-state" style="padding:1rem;"><p>Nessuna sessione in questo mese.</p></div>';
+    return;
+  }
+  const sorted = [...sessioniMese].sort((a,b) => a.data.localeCompare(b.data));
+  el.innerHTML = sorted.map(s => `
+    <div class="card" style="margin-bottom:0.6rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-weight:700;font-size:0.875rem;color:var(--lilla-scuro);">${s.tema}</div>
+          <div style="font-size:0.75rem;color:var(--gray);">${formatData(s.data)}</div>
+        </div>
+        <span class="pill pill-verde">${s.presenti.length} pres.</span>
+      </div>
+    </div>`).join('');
+}
+
+// ==================== DASHBOARD ====================
+let chartPresenze = null;
+
+function renderDashboard() {
+  document.getElementById('stat-utenti').textContent = state.utenti.length;
+  document.getElementById('stat-sessioni').textContent = state.sessioni.length;
+  const totPres = state.sessioni.reduce((a, s) => a + (s.presenti ? s.presenti.length : 0), 0);
+  document.getElementById('stat-presenze').textContent = totPres;
+
+  // chart presenze per mese
+  const mesiLabel = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+  const presMese = Array(12).fill(0);
+  state.sessioni.forEach(s => {
+    const m = parseInt(s.data.split('-')[1]) - 1;
+    presMese[m] += s.presenti ? s.presenti.length : 0;
+  });
+  const ctx = document.getElementById('chart-presenze').getContext('2d');
+  if (chartPresenze) chartPresenze.destroy();
+  chartPresenze = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: mesiLabel,
+      datasets: [{
+        label: 'Presenze',
+        data: presMese,
+        backgroundColor: '#B8E6C4',
+        borderColor: '#2A6B40',
+        borderWidth: 1.5,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: '#f0f0f0' } },
+        x: { ticks: { font: { size: 11 } }, grid: { display: false } }
+      }
+    }
+  });
+
+  // frequenza per utente
+  const freqEl = document.getElementById('freq-utenti');
+  if (state.utenti.length === 0) {
+    freqEl.innerHTML = '<div style="color:var(--gray);font-size:0.8rem;">Nessun utente.</div>';
+  } else {
+    const maxSess = Math.max(state.sessioni.length, 1);
+    freqEl.innerHTML = state.utenti.map((u, i) => {
+      const count = state.sessioni.filter(s => s.presenti && s.presenti.includes(u.id)).length;
+      const pct = Math.round(count / maxSess * 100);
+      const [bg] = avatarColor(i);
+      return `<div style="margin-bottom:0.6rem;">
+        <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:3px;">
+          <span style="font-weight:600;">${u.nome}</span>
+          <span style="color:var(--gray);">${count} sess. (${pct}%)</span>
+        </div>
+        <div class="benessere-bar"><div class="benessere-fill" style="width:${pct}%;background:${bg === '#EDF7F0' ? '#B8E6C4' : bg};"></div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // temi più usati
+  const temiEl = document.getElementById('temi-usati');
+  const temiCount = {};
+  state.sessioni.forEach(s => { temiCount[s.tema] = (temiCount[s.tema] || 0) + 1; });
+  const sorted = Object.entries(temiCount).sort((a,b) => b[1]-a[1]).slice(0, 5);
+  if (sorted.length === 0) {
+    temiEl.innerHTML = '<div style="color:var(--gray);font-size:0.8rem;">Nessuna sessione ancora.</div>';
+  } else {
+    temiEl.innerHTML = sorted.map(([nome, cnt]) => `
+      <div class="list-item">
+        <span style="font-size:0.875rem;font-weight:600;">${nome}</span>
+        <span class="pill pill-giallo">${cnt}×</span>
+      </div>`).join('');
+  }
+}
+
+// ==================== BIBLIOTECA ====================
+function openNuovoTema() {
+  document.getElementById('modal-tema-title').textContent = 'Nuovo Tema';
+  document.getElementById('t-id').value = '';
+  ['t-nome','t-desc','t-esercizi','t-musiche'].forEach(id => document.getElementById(id).value = '');
+  openModal('modal-tema');
+}
+
+function openModificaTema(id) {
+  const t = state.temi.find(t => t.id === id);
+  if (!t) return;
+  document.getElementById('modal-tema-title').textContent = 'Modifica Tema';
+  document.getElementById('t-id').value = t.id;
+  document.getElementById('t-nome').value = t.nome || '';
+  document.getElementById('t-desc').value = t.desc || '';
+  document.getElementById('t-esercizi').value = t.esercizi || '';
+  document.getElementById('t-musiche').value = t.musiche || '';
+  openModal('modal-tema');
+}
+
+function salvaTema() {
+  const nome = document.getElementById('t-nome').value.trim();
+  if (!nome) { toast('Inserisci il nome del tema'); return; }
+  const id = document.getElementById('t-id').value;
+  const dati = {
+    nome,
+    desc: document.getElementById('t-desc').value.trim(),
+    esercizi: document.getElementById('t-esercizi').value.trim(),
+    musiche: document.getElementById('t-musiche').value.trim()
+  };
+  if (id) {
+    const idx = state.temi.findIndex(t => t.id === id);
+    if (idx >= 0) state.temi[idx] = { ...state.temi[idx], ...dati };
+    toast('Tema aggiornato ✓');
+  } else {
+    state.temi.push({ id: uid(), ...dati });
+    toast('Tema salvato ✓');
+  }
+  save();
+  closeModal('modal-tema');
+  renderBiblioteca();
+}
+
+function eliminaTema(id) {
+  if (!confirm('Eliminare questo tema?')) return;
+  state.temi = state.temi.filter(t => t.id !== id);
+  save();
+  renderBiblioteca();
+  toast('Tema eliminato');
+}
+
+function renderBiblioteca() {
+  const el = document.getElementById('lista-temi');
+  if (state.temi.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📚</div><p>Nessun tema ancora.</p></div>';
+    return;
+  }
+  el.innerHTML = state.temi.map(t => `
+    <div class="tema-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div class="tema-nome">${t.nome}</div>
+        <div style="display:flex;gap:6px;flex-shrink:0;">
+          <button class="btn btn-sm btn-giallo" onclick="openModificaTema('${t.id}')">✎</button>
+          <button class="btn btn-sm btn-danger" onclick="eliminaTema('${t.id}')">✕</button>
+        </div>
+      </div>
+      ${t.desc ? `<div class="tema-desc">${t.desc}</div>` : ''}
+      <div class="tema-tags">
+        ${t.esercizi ? `<span class="pill pill-verde">🤸 ${t.esercizi.slice(0,30)}${t.esercizi.length>30?'…':''}</span>` : ''}
+        ${t.musiche ? `<span class="pill pill-giallo">🎵 ${t.musiche.slice(0,30)}${t.musiche.length>30?'…':''}</span>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+// ==================== FEEDBACK ====================
+const RISPOSTE_PREFISSATE = [
+  'Mi sono sentito/a leggero/a e libero/a',
+  'Ho ritrovato energia e vitalità',
+  'Ho vissuto un momento di profonda connessione',
+  'Mi sono emozionato/a in modo inaspettato',
+  'Ho sentito il corpo più mio',
+  'Ho avuto difficoltà a lasciarmi andare',
+  'È stata un\'esperienza intensa e bella',
+  'Ho bisogno di elaborare ancora'
+];
+
+function generaLinkFeedback() {
+  const sel = document.getElementById('fb-sessione-sel').value;
+  const box = document.getElementById('feedback-link-box');
+  if (!sel) { box.innerHTML = ''; return; }
+  const sessione = state.sessioni.find(s => s.id === sel);
+  if (!sessione) return;
+  const url = window.location.href.split('?')[0] + '?feedback=' + encodeURIComponent(sel);
+  box.innerHTML = `<div class="link-box">
+    <div class="link-box-text">📎 ${url}</div>
+    <button class="link-box-copy" onclick="copiaLink('${url}')">Copia</button>
+  </div>
+  <p style="font-size:0.75rem;color:var(--gray);margin-top:0.5rem;">Condividi su WhatsApp con: <em>"Ciao! Dopo la sessione di oggi — ${sessione.tema} — condividi come ti sei sentito/a 🌿"</em></p>`;
+}
+
+function copiaLink(url) {
+  navigator.clipboard.writeText(url).then(() => toast('Link copiato ✓'));
+}
+
+function renderFeedbackPanel() {
+  // popola select sessioni
+  const sel = document.getElementById('fb-sessione-sel');
+  const sorted = [...state.sessioni].sort((a,b) => b.data.localeCompare(a.data));
+  sel.innerHTML = '<option value="">— Scegli sessione —</option>' +
+    sorted.map(s => `<option value="${s.id}">${formatData(s.data)} · ${s.tema}</option>`).join('');
+
+  // lista feedback
+  const el = document.getElementById('lista-feedback');
+  if (state.feedback.length === 0) {
+    el.innerHTML = '<div style="color:var(--gray);font-size:0.8rem;padding:0.5rem 0;">Nessun feedback ancora. Condividi il link ai partecipanti.</div>';
+    return;
+  }
+  el.innerHTML = state.feedback.map(f => {
+    const sess = state.sessioni.find(s => s.id === f.sessione);
+    return `<div class="list-item">
+      <div>
+        <div style="font-size:0.8rem;font-weight:600;">${sess ? sess.tema : '?'} · ${formatData(f.data)}</div>
+        <div style="font-size:0.78rem;color:var(--gray);margin-top:2px;">${f.risposta}</div>
+        ${f.nota ? `<div style="font-size:0.75rem;color:var(--lilla-mid);margin-top:2px;">${f.nota}</div>` : ''}
+      </div>
+      <div style="text-align:center;font-size:1rem;">
+        ${'⭐'.repeat(f.voto)}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ==================== PAGAMENTI ====================
+function updatePagamentoFields() {
+  const tipo = document.getElementById('pag-tipo').value;
+  document.getElementById('pag-sessioni-group').style.display = tipo === 'pacchetto' ? 'block' : 'none';
+  document.getElementById('pag-scadenza-group').style.display = tipo === 'singola' ? 'none' : 'block';
+  document.getElementById('pag-sessione-group').style.display = tipo === 'singola' ? 'block' : 'none';
+  document.getElementById('pag-scadenza-opt').textContent = tipo === 'abbonamento' ? '' : '(opzionale)';
+  if (tipo === 'singola') updatePagamentoSessioniSelect();
+}
+
+function onPagUtenteChange() {
+  if (document.getElementById('pag-tipo').value === 'singola') updatePagamentoSessioniSelect();
+}
+
+function updatePagamentoSessioniSelect() {
+  const utenteId = document.getElementById('pag-utente').value;
+  const sel = document.getElementById('pag-sessione');
+  const sessioni = state.sessioni
+    .filter(s => !utenteId || (s.presenti && s.presenti.includes(utenteId)))
+    .sort((a,b) => b.data.localeCompare(a.data));
+  sel.innerHTML = '<option value="">— Scegli sessione —</option>' +
+    sessioni.map(s => `<option value="${s.id}">${formatData(s.data)} · ${s.tema}</option>`).join('');
+}
+
+function openNuovoPagamento() {
+  const sel = document.getElementById('pag-utente');
+  sel.innerHTML = '<option value="">— Scegli utente —</option>' +
+    state.utenti.map(u => `<option value="${u.id}">${u.nome}</option>`).join('');
+  document.getElementById('pag-tipo').value = 'pacchetto';
+  document.getElementById('pag-importo').value = '';
+  document.getElementById('pag-data').value = new Date().toISOString().slice(0,10);
+  document.getElementById('pag-metodo').value = 'Contanti';
+  document.getElementById('pag-sessioni-incluse').value = '';
+  document.getElementById('pag-scadenza').value = '';
+  document.getElementById('pag-sessione').innerHTML = '<option value="">— Scegli sessione —</option>';
+  document.getElementById('pag-note').value = '';
+  updatePagamentoFields();
+  openModal('modal-pagamento');
+}
+
+function salvaPagamento() {
+  const utenteId = document.getElementById('pag-utente').value;
+  if (!utenteId) { toast('Scegli un utente'); return; }
+  const importo = parseFloat(document.getElementById('pag-importo').value);
+  if (!importo || importo <= 0) { toast('Inserisci un importo valido'); return; }
+  const tipo = document.getElementById('pag-tipo').value;
+  const dataPagamento = document.getElementById('pag-data').value || new Date().toISOString().slice(0,10);
+  const scadenza = document.getElementById('pag-scadenza').value;
+  if (tipo === 'abbonamento' && !scadenza) { toast('Inserisci la data di scadenza dell\'abbonamento'); return; }
+  const sessioniIncluse = tipo === 'pacchetto' ? parseInt(document.getElementById('pag-sessioni-incluse').value) : null;
+  if (tipo === 'pacchetto' && (!sessioniIncluse || sessioniIncluse <= 0)) { toast('Inserisci il numero di sessioni incluse'); return; }
+  const sessioneId = tipo === 'singola' ? document.getElementById('pag-sessione').value : '';
+  if (tipo === 'singola' && !sessioneId) { toast('Scegli la sessione collegata'); return; }
+  state.pagamenti.push({
+    id: uid(),
+    utenteId,
+    tipo,
+    importo,
+    metodo: document.getElementById('pag-metodo').value,
+    dataPagamento,
+    sessioniIncluse: tipo === 'pacchetto' ? sessioniIncluse : null,
+    scadenza: tipo !== 'singola' ? (scadenza || '') : '',
+    sessioneId: tipo === 'singola' ? sessioneId : null,
+    note: document.getElementById('pag-note').value.trim()
+  });
+  save();
+  closeModal('modal-pagamento');
+  renderPagamenti();
+  toast('Pagamento registrato ✓');
+}
+
+function eliminaPagamento(id) {
+  if (!confirm('Eliminare questo pagamento?')) return;
+  state.pagamenti = state.pagamenti.filter(p => p.id !== id);
+  save();
+  renderPagamenti();
+  toast('Pagamento eliminato');
+}
+
+function statoPagamento(p) {
+  const oggi = new Date().toISOString().slice(0,10);
+  if (p.tipo === 'singola') return { label: 'Pagata', cls: 'verde' };
+  if (p.tipo === 'abbonamento') {
+    if (!p.scadenza) return { label: 'Attivo', cls: 'verde' };
+    const giorni = Math.ceil((new Date(p.scadenza) - new Date(oggi)) / 86400000);
+    if (giorni < 0) return { label: 'Scaduto', cls: 'rosso' };
+    if (giorni <= 7) return { label: `Scade tra ${giorni}g`, cls: 'giallo' };
+    return { label: 'Attivo', cls: 'verde' };
+  }
+  // pacchetto
+  if (p.scadenza) {
+    const giorni = Math.ceil((new Date(p.scadenza) - new Date(oggi)) / 86400000);
+    if (giorni < 0) return { label: 'Scaduto', cls: 'rosso' };
+  }
+  const usate = state.sessioni.filter(s => s.presenti && s.presenti.includes(p.utenteId)
+    && s.data >= p.dataPagamento && (!p.scadenza || s.data <= p.scadenza)).length;
+  const residue = (p.sessioniIncluse || 0) - usate;
+  if (residue <= 0) return { label: 'Esaurito', cls: 'rosso' };
+  if (residue <= 2) return { label: `${residue} residue`, cls: 'giallo' };
+  return { label: `${residue} residue`, cls: 'verde' };
+}
+
+const TIPO_PAGAMENTO_LABEL = { pacchetto: 'Pacchetto', abbonamento: 'Abbonamento', singola: 'Sessione singola' };
+
+// Stato pagamento per una specifica sessione + utente (ibrido: auto + override manuale)
+function pagamentoSessioneStato(utenteId, sessioneId) {
+  const sess = state.sessioni.find(s => s.id === sessioneId);
+  if (!sess) return { pagato: false, manuale: false };
+  // 1. override manuale ha priorità
+  if (sess.overridePagamenti && sess.overridePagamenti[utenteId] !== undefined) {
+    return { pagato: sess.overridePagamenti[utenteId], manuale: true };
+  }
+  // 2. pagamento "sessione singola" collegato esplicitamente
+  const singola = state.pagamenti.find(p => p.tipo === 'singola' && p.utenteId === utenteId && p.sessioneId === sessioneId);
+  if (singola) return { pagato: true, manuale: false };
+  // 3. abbonamento attivo alla data della sessione
+  const abbonamento = state.pagamenti.find(p => p.tipo === 'abbonamento' && p.utenteId === utenteId &&
+    p.dataPagamento <= sess.data && (!p.scadenza || sess.data <= p.scadenza));
+  if (abbonamento) return { pagato: true, manuale: false };
+  // 4. pacchetto: la sessione rientra tra le prime N frequentate dopo il pagamento
+  const pacchetti = state.pagamenti.filter(p => p.tipo === 'pacchetto' && p.utenteId === utenteId);
+  for (const p of pacchetti) {
+    const sessioniCoperte = state.sessioni
+      .filter(s => s.presenti && s.presenti.includes(utenteId) && s.data >= p.dataPagamento && (!p.scadenza || s.data <= p.scadenza))
+      .sort((a,b) => a.data.localeCompare(b.data))
+      .slice(0, p.sessioniIncluse)
+      .map(s => s.id);
+    if (sessioniCoperte.includes(sessioneId)) return { pagato: true, manuale: false };
+  }
+  return { pagato: false, manuale: false };
+}
+
+function togglePagamentoOverride(sessioneId, utenteId) {
+  const s = state.sessioni.find(s => s.id === sessioneId);
+  if (!s) return;
+  if (!s.overridePagamenti) s.overridePagamenti = {};
+  const cur = s.overridePagamenti[utenteId];
+  if (cur === undefined) s.overridePagamenti[utenteId] = true;
+  else if (cur === true) s.overridePagamenti[utenteId] = false;
+  else delete s.overridePagamenti[utenteId];
+  save();
+  renderListaSessioni();
+}
+
+function renderPagamenti() {
+  // riepilogo
+  const meseCorrente = new Date().toISOString().slice(0,7);
+  const incassato = state.pagamenti
+    .filter(p => p.dataPagamento && p.dataPagamento.slice(0,7) === meseCorrente)
+    .reduce((a, p) => a + p.importo, 0);
+  document.getElementById('pag-stat-incassato').textContent = '€' + incassato.toFixed(2).replace(/\.00$/, '');
+  const daRinnovare = state.pagamenti.filter(p => {
+    const st = statoPagamento(p);
+    return st.cls === 'rosso' || st.cls === 'giallo';
+  }).length;
+  document.getElementById('pag-stat-scadenze').textContent = daRinnovare;
+
+  // lista
+  const el = document.getElementById('lista-pagamenti');
+  if (state.pagamenti.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">💳</div><p>Nessun pagamento ancora.<br>Registra il primo pagamento.</p></div>';
+    return;
+  }
+  const sorted = [...state.pagamenti].sort((a,b) => b.dataPagamento.localeCompare(a.dataPagamento));
+  el.innerHTML = sorted.map(p => {
+    const u = state.utenti.find(u => u.id === p.utenteId);
+    const st = statoPagamento(p);
+    return `<div class="card" style="margin-bottom:0.6rem;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div style="min-width:0;flex:1;">
+          <div style="font-weight:700;font-size:0.9rem;color:var(--verde-scuro);">${u ? u.nome : 'Utente eliminato'}</div>
+          <div style="font-size:0.75rem;color:var(--gray);margin-top:2px;">${TIPO_PAGAMENTO_LABEL[p.tipo]} · ${formatData(p.dataPagamento)} · ${p.metodo} · €${p.importo.toFixed(2)}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+          <span class="pill pill-${st.cls}">${st.label}</span>
+          <button class="btn btn-sm btn-danger" onclick="eliminaPagamento('${p.id}')">✕</button>
+        </div>
+      </div>
+      ${p.scadenza ? `<div style="font-size:0.72rem;color:var(--gray);margin-top:6px;">Scadenza: ${formatData(p.scadenza)}</div>` : ''}
+      ${p.tipo === 'singola' && p.sessioneId ? (() => {
+        const sLink = state.sessioni.find(s => s.id === p.sessioneId);
+        return sLink ? `<div style="font-size:0.72rem;color:var(--gray);margin-top:6px;">Sessione: ${formatData(sLink.data)} · ${sLink.tema}</div>` : '';
+      })() : ''}
+      ${p.note ? `<div style="font-size:0.78rem;color:var(--gray);margin-top:6px;border-top:0.5px solid #f0f0f0;padding-top:6px;">${p.note}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ==================== FEEDBACK PAGE (link esterno) ====================
+function checkFeedbackMode() {
+  const params = new URLSearchParams(window.location.search);
+  const sessId = params.get('feedback');
+  if (!sessId) return;
+  const sess = state.sessioni.find(s => s.id === sessId);
+  if (!sess) { document.body.innerHTML = '<div style="padding:2rem;text-align:center;font-family:Outfit,sans-serif;"><h2 style="color:#5A1A4A;">Sessione non trovata.</h2></div>'; return; }
+
+  document.body.innerHTML = `
+  <div style="font-family:'Nunito',sans-serif;max-width:480px;margin:0 auto;padding:1.5rem;">
+    <div style="background:#B8E6C4;border-radius:16px;padding:1.25rem;margin-bottom:1.5rem;text-align:center;">
+      <div style="font-family:'Quicksand',sans-serif;font-size:1.3rem;font-weight:700;color:#2A6B40;">🌿 Biodanza Manager</div>
+      <div style="font-size:0.85rem;color:#4A9B60;margin-top:4px;">Feedback sessione</div>
+    </div>
+    <div style="background:white;border-radius:12px;border:0.5px solid #e0e0e0;padding:1.25rem;margin-bottom:1rem;">
+      <div style="font-weight:700;font-size:1rem;color:#5A1A4A;margin-bottom:4px;">${sess.tema}</div>
+      <div style="font-size:0.8rem;color:#888;">${formatData(sess.data)}</div>
+    </div>
+    <div style="background:white;border-radius:12px;border:0.5px solid #e0e0e0;padding:1.25rem;">
+      <p style="font-weight:700;color:#2A6B40;margin-bottom:1rem;">Come ti sei sentito/a oggi?</p>
+      <div id="fb-risposte" style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.25rem;">
+        ${RISPOSTE_PREFISSATE.map((r, i) => `
+          <label style="display:flex;align-items:center;gap:10px;padding:0.6rem 0.75rem;border-radius:8px;border:1px solid #e0e0e0;cursor:pointer;" id="rlabel-${i}">
+            <input type="radio" name="risposta" value="${r}" onchange="selectRisposta(${i})"> <span style="font-size:0.875rem;">${r}</span>
+          </label>`).join('')}
+      </div>
+      <p style="font-weight:700;color:#2A6B40;margin-bottom:0.5rem;">Voto generale (1–5 ⭐)</p>
+      <div style="display:flex;gap:8px;margin-bottom:1.25rem;" id="fb-stars">
+        ${[1,2,3,4,5].map(v => `<button onclick="setVoto(${v})" id="star-${v}" style="font-size:1.5rem;background:none;border:none;cursor:pointer;opacity:0.3;transition:opacity 0.15s;">⭐</button>`).join('')}
+      </div>
+      <p style="font-weight:700;color:#2A6B40;margin-bottom:0.5rem;">Nota libera (opzionale)</p>
+      <textarea id="fb-nota" style="width:100%;padding:0.6rem 0.75rem;border:1px solid #e0e0e0;border-radius:8px;font-family:Outfit,sans-serif;font-size:0.875rem;resize:vertical;min-height:60px;margin-bottom:1rem;" placeholder="Un'emozione, una parola, un'immagine..."></textarea>
+      <button onclick="inviaFeedback('${sessId}')" style="width:100%;padding:0.75rem;background:#B8E6C4;border:none;border-radius:8px;font-family:Outfit,sans-serif;font-weight:700;font-size:1rem;color:#2A6B40;cursor:pointer;">Invia feedback 🌿</button>
+    </div>
+  </div>`;
+
+  window._fbVoto = 0;
+  window._fbRisposta = '';
+}
+
+function selectRisposta(i) {
+  document.querySelectorAll('[id^=rlabel-]').forEach(l => l.style.background = '');
+  document.getElementById('rlabel-' + i).style.background = '#EDF7F0';
+  document.getElementById('rlabel-' + i).style.borderColor = '#B8E6C4';
+  window._fbRisposta = RISPOSTE_PREFISSATE[i];
+}
+
+function setVoto(v) {
+  window._fbVoto = v;
+  for (let i = 1; i <= 5; i++) {
+    document.getElementById('star-' + i).style.opacity = i <= v ? '1' : '0.3';
+  }
+}
+
+function inviaFeedback(sessId) {
+  if (!window._fbRisposta) { alert('Scegli una risposta.'); return; }
+  if (!window._fbVoto) { alert('Dai un voto.'); return; }
+  state.feedback.push({
+    id: uid(),
+    sessione: sessId,
+    risposta: window._fbRisposta,
+    voto: window._fbVoto,
+    nota: document.getElementById('fb-nota').value.trim(),
+    data: new Date().toISOString().slice(0,10)
+  });
+  save();
+  document.body.innerHTML = `<div style="font-family:Outfit,sans-serif;text-align:center;padding:3rem 1.5rem;">
+    <div style="font-size:3rem;margin-bottom:1rem;">🌿</div>
+    <h2 style="color:#2A6B40;font-family:Quicksand,sans-serif;">Grazie!</h2>
+    <p style="color:#888;margin-top:0.5rem;">Il tuo feedback è stato inviato.</p>
+  </div>`;
+}
+
+// ==================== UTILS ====================
+function formatData(str) {
+  if (!str) return '';
+  const [y, m, d] = str.split('-');
+  const mesi = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  return `${parseInt(d)} ${mesi[parseInt(m)-1]} ${y}`;
+}
+
+// ==================== ACCORDION ISTRUZIONI ====================
+function toggleAccordion(id) {
+  const el = document.getElementById(id);
+  const icon = document.getElementById(id + '-icon');
+  const open = el.style.display === 'block';
+  el.style.display = open ? 'none' : 'block';
+  icon.textContent = open ? '+' : '−';
+}
+
+// ==================== PASSWORD ====================
+const PWD_KEY = 'biodanza_auth';
+const PWD_HASH = 'elebio';
+const PWD_TTL = 7 * 24 * 60 * 60 * 1000;
+
+function checkAuth() {
+  if (window.location.search.includes('feedback')) return true;
+  const saved = localStorage.getItem(PWD_KEY);
+  if (saved) {
+    const { ts } = JSON.parse(saved);
+    if (Date.now() - ts < PWD_TTL) return true;
+  }
+  return false;
+}
+
+function showGate() {
+  const gate = document.getElementById('password-gate');
+  gate.style.display = 'flex';
+}
+
+function checkPassword() {
+  const val = document.getElementById('pwd-input').value;
+  if (val === PWD_HASH) {
+    localStorage.setItem(PWD_KEY, JSON.stringify({ ts: Date.now() }));
+    document.getElementById('password-gate').style.display = 'none';
+    document.getElementById('pwd-error').style.display = 'none';
+  } else {
+    document.getElementById('pwd-error').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+
+// ==================== INIT ====================
+load();
+checkFeedbackMode();
+if (!window.location.search.includes('feedback')) {
+  if (!checkAuth()) {
+    showGate();
+  }
+  renderUtenti();
+  renderCalendario();
+}
+</script>
+</body>
+</html>
